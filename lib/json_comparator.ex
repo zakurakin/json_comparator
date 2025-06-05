@@ -1,6 +1,18 @@
 defmodule JsonComparator do
   @moduledoc """
   Provides functionality for comparing JSON structures with configurable comparison options.
+
+  ## Examples
+
+      iex> map1 = %{a: 1, b: 2, c: %{d: 3, e: 4}}
+      iex> map2 = %{a: 1, b: 5, c: %{d: 6}}
+      iex> {:error, differences} = JsonComparator.compare_all(map1, map2)
+      iex> Enum.map(differences, fn {path, _} -> path end) |> Enum.sort()
+      ["b", "c.d", "c.e"]
+
+      # No differences
+      iex> JsonComparator.compare_all(%{a: 1}, %{a: 1})
+      :ok
   """
 
   @doc """
@@ -36,6 +48,44 @@ defmodule JsonComparator do
        string indicating the path where the first difference was encountered
     * `{:error, differences}` - When differences are found and `deep_compare: true`, where differences
        is a list of tuples containing path and details about each difference
+
+  ## Examples
+
+      # Basic comparison (stops at first difference)
+      iex> JsonComparator.compare(%{a: 1, b: 2}, %{a: 1, b: 2})
+      :ok
+
+      iex> JsonComparator.compare(%{a: 1, b: 2}, %{a: 1, b: 3})
+      {:error, "Submitted JSONs do not match: b"}
+
+      # Unordered list comparison (default behavior)
+      iex> JsonComparator.compare([1, 2, 3], [3, 2, 1])
+      :ok
+
+      # Ordered list comparison
+      iex> JsonComparator.compare([1, 2, 3], [1, 2, 3], strict_list_order: true)
+      :ok
+
+      # Custom error message
+      iex> JsonComparator.compare(%{a: 1}, %{a: 2}, error_message: "Values differ at: %{path}")
+      {:error, "Values differ at: a"}
+
+      # Deep comparison (collect all differences)
+      iex> map1 = %{a: 1, b: 2, c: 3, d: %{e: 4, f: 5}}
+      iex> map2 = %{a: 1, b: 7, d: %{e: 9, g: 8}, h: 10}
+      iex> {:error, differences} = JsonComparator.compare(map1, map2, deep_compare: true)
+      iex> length(differences)
+      6
+
+      # Processing all differences
+      iex> map1 = %{a: 1, b: 2, c: 3}
+      iex> map2 = %{a: 1, b: 5}
+      iex> {:error, diffs} = JsonComparator.compare(map1, map2, deep_compare: true) |> IO.inspect(label: "---- Result ----", limit: :infinity)
+      {:error,
+      [
+        {"c", %{type: :missing_key, actual: nil, expected: 3}},
+        {"b", %{type: :value_mismatch, actual: 5, expected: 2}}
+      ]}
   """
   def compare(json1, json2, opts \\ []) do
     opts =

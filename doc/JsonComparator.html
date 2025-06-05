@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="json_comparator v1.0.2">
+    <meta name="project" content="json_comparator v1.0.3">
 
 
-    <title>JsonComparator — json_comparator v1.0.2</title>
+    <title>JsonComparator — json_comparator v1.0.3</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-3F21BA23.js"></script>
+    <script defer src="dist/sidebar_items-93EFF2A6.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -37,7 +37,7 @@
 json_comparator
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v1.0.2
+          v1.0.3
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ json_comparator
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">JsonComparator</span> 
-      <small class="app-vsn" translate="no">(json_comparator v1.0.2)</small>
+      <small class="app-vsn" translate="no">(json_comparator v1.0.3)</small>
 
     </h1>
 
@@ -89,7 +89,15 @@ json_comparator
 
 
     <section id="moduledoc">
-<p>Provides functionality for comparing JSON structures with configurable comparison options.</p>
+<p>Provides functionality for comparing JSON structures with configurable comparison options.</p><h2 id="module-examples" class="section-heading"><a href="#module-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="n">map1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="3969665953-1">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">c</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3969665953-2">%{</span><span class="ss">d</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="ss">e</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p" data-group-id="3969665953-2">}</span><span class="p" data-group-id="3969665953-1">}</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">map2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="3969665953-3">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="ss">c</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="3969665953-4">%{</span><span class="ss">d</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="p" data-group-id="3969665953-4">}</span><span class="p" data-group-id="3969665953-3">}</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="p" data-group-id="3969665953-5">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">differences</span><span class="p" data-group-id="3969665953-5">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare_all</span><span class="p" data-group-id="3969665953-6">(</span><span class="n">map1</span><span class="p">,</span><span class="w"> </span><span class="n">map2</span><span class="p" data-group-id="3969665953-6">)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">Enum</span><span class="o">.</span><span class="n">map</span><span class="p" data-group-id="3969665953-7">(</span><span class="n">differences</span><span class="p">,</span><span class="w"> </span><span class="k" data-group-id="3969665953-8">fn</span><span class="w"> </span><span class="p" data-group-id="3969665953-9">{</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="bp">_</span><span class="p" data-group-id="3969665953-9">}</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="k" data-group-id="3969665953-8">end</span><span class="p" data-group-id="3969665953-7">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">Enum</span><span class="o">.</span><span class="n">sort</span><span class="p" data-group-id="3969665953-10">(</span><span class="p" data-group-id="3969665953-10">)</span><span class="w">
+</span><span class="p" data-group-id="3969665953-11">[</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c.d&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;c.e&quot;</span><span class="p" data-group-id="3969665953-11">]</span><span class="w">
+
+</span><span class="c1"># No differences</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare_all</span><span class="p" data-group-id="3969665953-12">(</span><span class="p" data-group-id="3969665953-13">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="3969665953-13">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="3969665953-14">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="3969665953-14">}</span><span class="p" data-group-id="3969665953-12">)</span><span class="w">
+</span><span class="ss">:ok</span></code></pre>
     </section>
 
 </div>
@@ -141,7 +149,7 @@ json_comparator
       <h1 class="signature" translate="no">compare(json1, json2, opts \\ [])</h1>
 
 
-        <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator.ex#L40" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator.ex#L90" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -161,7 +169,41 @@ Defaults to &quot;Submitted JSONs do not match: %{path}&quot;</li><li><code clas
 Defaults to <code class="inline">false</code>. When <code class="inline">true</code>, returns <code class="inline">{:error, differences}</code> where <code class="inline">differences</code> is a list
 of <code class="inline">{path, details}</code> tuples.</li></ul></li></ul><h2 id="compare/3-returns" class="section-heading"><a href="#compare/3-returns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Returns</span></h2><ul><li><code class="inline">:ok</code> - When the structures are equal according to the comparison rules</li><li><code class="inline">{:error, message}</code> - When differences are found and <code class="inline">deep_compare: false</code>, where message is a
  string indicating the path where the first difference was encountered</li><li><code class="inline">{:error, differences}</code> - When differences are found and <code class="inline">deep_compare: true</code>, where differences
- is a list of tuples containing path and details about each difference</li></ul>
+ is a list of tuples containing path and details about each difference</li></ul><h2 id="compare/3-examples" class="section-heading"><a href="#compare/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="c1"># Basic comparison (stops at first difference)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="9496935619-1">(</span><span class="p" data-group-id="9496935619-2">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="9496935619-2">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9496935619-3">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="9496935619-3">}</span><span class="p" data-group-id="9496935619-1">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="9496935619-4">(</span><span class="p" data-group-id="9496935619-5">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="9496935619-5">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9496935619-6">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="9496935619-6">}</span><span class="p" data-group-id="9496935619-4">)</span><span class="w">
+</span><span class="p" data-group-id="9496935619-7">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Submitted JSONs do not match: b&quot;</span><span class="p" data-group-id="9496935619-7">}</span><span class="w">
+
+</span><span class="c1"># Unordered list comparison (default behavior)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="9496935619-8">(</span><span class="p" data-group-id="9496935619-9">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="9496935619-9">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9496935619-10">[</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="9496935619-10">]</span><span class="p" data-group-id="9496935619-8">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+
+</span><span class="c1"># Ordered list comparison</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="9496935619-11">(</span><span class="p" data-group-id="9496935619-12">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="9496935619-12">]</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9496935619-13">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="9496935619-13">]</span><span class="p">,</span><span class="w"> </span><span class="ss">strict_list_order</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="9496935619-11">)</span><span class="w">
+</span><span class="ss">:ok</span><span class="w">
+
+</span><span class="c1"># Custom error message</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="9496935619-14">(</span><span class="p" data-group-id="9496935619-15">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="9496935619-15">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9496935619-16">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="9496935619-16">}</span><span class="p">,</span><span class="w"> </span><span class="ss">error_message</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Values differ at: %{path}&quot;</span><span class="p" data-group-id="9496935619-14">)</span><span class="w">
+</span><span class="p" data-group-id="9496935619-17">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Values differ at: a&quot;</span><span class="p" data-group-id="9496935619-17">}</span><span class="w">
+
+</span><span class="c1"># Deep comparison (collect all differences)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">map1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9496935619-18">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">c</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="ss">d</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="9496935619-19">%{</span><span class="ss">e</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="ss">f</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p" data-group-id="9496935619-19">}</span><span class="p" data-group-id="9496935619-18">}</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">map2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9496935619-20">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="ss">d</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="9496935619-21">%{</span><span class="ss">e</span><span class="p">:</span><span class="w"> </span><span class="mi">9</span><span class="p">,</span><span class="w"> </span><span class="ss">g</span><span class="p">:</span><span class="w"> </span><span class="mi">8</span><span class="p" data-group-id="9496935619-21">}</span><span class="p">,</span><span class="w"> </span><span class="ss">h</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p" data-group-id="9496935619-20">}</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="p" data-group-id="9496935619-22">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">differences</span><span class="p" data-group-id="9496935619-22">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="9496935619-23">(</span><span class="n">map1</span><span class="p">,</span><span class="w"> </span><span class="n">map2</span><span class="p">,</span><span class="w"> </span><span class="ss">deep_compare</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="9496935619-23">)</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">length</span><span class="p" data-group-id="9496935619-24">(</span><span class="n">differences</span><span class="p" data-group-id="9496935619-24">)</span><span class="w">
+</span><span class="mi">6</span><span class="w">
+
+</span><span class="c1"># Processing all differences</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">map1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9496935619-25">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="ss">c</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="9496935619-25">}</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="n">map2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p" data-group-id="9496935619-26">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="ss">b</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p" data-group-id="9496935619-26">}</span><span class="w">
+</span><span class="gp unselectable">iex&gt; </span><span class="p" data-group-id="9496935619-27">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="n">diffs</span><span class="p" data-group-id="9496935619-27">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="9496935619-28">(</span><span class="n">map1</span><span class="p">,</span><span class="w"> </span><span class="n">map2</span><span class="p">,</span><span class="w"> </span><span class="ss">deep_compare</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="9496935619-28">)</span><span class="w"> </span><span class="o">|&gt;</span><span class="w"> </span><span class="nc">IO</span><span class="o">.</span><span class="n">inspect</span><span class="p" data-group-id="9496935619-29">(</span><span class="ss">label</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;---- Result ----&quot;</span><span class="p">,</span><span class="w"> </span><span class="ss">limit</span><span class="p">:</span><span class="w"> </span><span class="ss">:infinity</span><span class="p" data-group-id="9496935619-29">)</span><span class="w">
+</span><span class="p" data-group-id="9496935619-30">{</span><span class="ss">:error</span><span class="p">,</span><span class="w">
+</span><span class="p" data-group-id="9496935619-31">[</span><span class="w">
+  </span><span class="p" data-group-id="9496935619-32">{</span><span class="s">&quot;c&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9496935619-33">%{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="ss">:missing_key</span><span class="p">,</span><span class="w"> </span><span class="ss">actual</span><span class="p">:</span><span class="w"> </span><span class="no">nil</span><span class="p">,</span><span class="w"> </span><span class="ss">expected</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p" data-group-id="9496935619-33">}</span><span class="p" data-group-id="9496935619-32">}</span><span class="p">,</span><span class="w">
+  </span><span class="p" data-group-id="9496935619-34">{</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="9496935619-35">%{</span><span class="ss">type</span><span class="p">:</span><span class="w"> </span><span class="ss">:value_mismatch</span><span class="p">,</span><span class="w"> </span><span class="ss">actual</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="ss">expected</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="9496935619-35">}</span><span class="p" data-group-id="9496935619-34">}</span><span class="w">
+</span><span class="p" data-group-id="9496935619-31">]</span><span class="p" data-group-id="9496935619-30">}</span></code></pre>
   </section>
 </section>
 
@@ -172,9 +214,9 @@ of <code class="inline">{path, details}</code> tuples.</li></ul></li></ul><h2 id
       <p>
 
           <span class="line">
-            <a href="https://hex.pm/packages/json_comparator/1.0.2" class="footer-hex-package">Hex Package</a>
+            <a href="https://hex.pm/packages/json_comparator/1.0.3" class="footer-hex-package">Hex Package</a>
 
-            <a href="https://preview.hex.pm/preview/json_comparator/1.0.2">Hex Preview</a>
+            <a href="https://preview.hex.pm/preview/json_comparator/1.0.3">Hex Preview</a>
 
           </span>
 
