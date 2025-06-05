@@ -31,14 +31,11 @@ defmodule JsonComparator do
   """
   def compare(json1, json2, opts \\ []) do
     opts =
-      Keyword.merge(
-        [
-          strict_list_order: false,
-          truncate_datetime_microseconds: true,
-          error_message: "Submitted JSONs do not match: %{path}"
-        ],
-        opts
-      )
+      [
+        strict_list_order: Keyword.get(opts, :strict_list_order, false),
+        truncate_datetime_microseconds: Keyword.get(opts, :truncate_datetime_microseconds, true),
+        error_message: Keyword.get(opts, :error_message, "Submitted JSONs do not match: %{path}")
+      ]
 
     case deep_compare(json1, json2, opts) do
       {:ok, true} ->

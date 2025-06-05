@@ -5,14 +5,14 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="json_comparator v0.1.1">
+    <meta name="project" content="json_comparator v1.0.1">
 
 
-    <title>JsonComparator — json_comparator v0.1.1</title>
+    <title>JsonComparator — json_comparator v1.0.1</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
-    <script defer src="dist/sidebar_items-E01A2B58.js"></script>
+    <script defer src="dist/sidebar_items-3F21BA23.js"></script>
     <script defer src="docs_config.js"></script>
     <script defer src="dist/html-DPJLHKSM.js"></script>
 
@@ -37,7 +37,7 @@
 json_comparator
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v0.1.1
+          v1.0.1
         </div>
       </div>
     </div>
@@ -76,11 +76,11 @@ json_comparator
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">JsonComparator</span> 
-      <small class="app-vsn" translate="no">(json_comparator v0.1.1)</small>
+      <small class="app-vsn" translate="no">(json_comparator v1.0.1)</small>
 
     </h1>
 
-      <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator/json_comparator.ex#L1" title="View Source" class="icon-action" rel="help">
+      <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator.ex#L1" title="View Source" class="icon-action" rel="help">
         <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         <span class="sr-only">View Source</span>
       </a>
@@ -141,7 +141,7 @@ json_comparator
       <h1 class="signature" translate="no">compare(json1, json2, opts \\ [])</h1>
 
 
-        <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator/json_comparator.ex#L48" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator.ex#L32" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -157,19 +157,7 @@ Defaults to <code class="inline">false</code></li><li><code class="inline">:trun
 Defaults to <code class="inline">true</code></li><li><code class="inline">:error_message</code> - Custom error message template to use when differences are found.
 The string <code class="inline">%{path}</code> will be replaced with the path where the difference was found.
 Defaults to &quot;Submitted JSONs do not match: %{path}&quot;</li></ul></li></ul><h2 id="compare/3-returns" class="section-heading"><a href="#compare/3-returns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Returns</span></h2><ul><li><code class="inline">:ok</code> - When the structures are equal according to the comparison rules</li><li><code class="inline">{:error, message}</code> - When differences are found, where message is a string indicating
-the path where the first difference was encountered</li></ul><h2 id="compare/3-examples" class="section-heading"><a href="#compare/3-examples" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Examples</span></h2><pre><code class="makeup elixir" translate="no"><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="2428624192-1">(</span><span class="p" data-group-id="2428624192-2">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="2428624192-2">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2428624192-3">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="2428624192-3">}</span><span class="p" data-group-id="2428624192-1">)</span><span class="w">
-</span><span class="ss">:ok</span><span class="w">
-
-</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="2428624192-4">(</span><span class="p" data-group-id="2428624192-5">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2428624192-6">[</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="2428624192-6">]</span><span class="p" data-group-id="2428624192-5">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2428624192-7">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="p" data-group-id="2428624192-8">[</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="2428624192-8">]</span><span class="p" data-group-id="2428624192-7">}</span><span class="p">,</span><span class="w"> </span><span class="ss">strict_list_order</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="2428624192-4">)</span><span class="w">
-</span><span class="p" data-group-id="2428624192-9">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Submitted JSONs do not match: a[0]&quot;</span><span class="p" data-group-id="2428624192-9">}</span><span class="w">
-
-</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="2428624192-10">(</span><span class="p" data-group-id="2428624192-11">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p" data-group-id="2428624192-11">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2428624192-12">%{</span><span class="ss">a</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="p" data-group-id="2428624192-12">}</span><span class="p">,</span><span class="w"> </span><span class="ss">error_message</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Values differ at: %{path}&quot;</span><span class="p" data-group-id="2428624192-10">)</span><span class="w">
-</span><span class="p" data-group-id="2428624192-13">{</span><span class="ss">:error</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Values differ at: a&quot;</span><span class="p" data-group-id="2428624192-13">}</span><span class="w">
-
-</span><span class="gp unselectable">iex&gt; </span><span class="n">dt1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DateTime</span><span class="o">.</span><span class="n">from_iso8601</span><span class="p" data-group-id="2428624192-14">(</span><span class="s">&quot;2024-01-01T00:00:00.123456Z&quot;</span><span class="p" data-group-id="2428624192-14">)</span><span class="w">
-</span><span class="gp unselectable">iex&gt; </span><span class="n">dt2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nc">DateTime</span><span class="o">.</span><span class="n">from_iso8601</span><span class="p" data-group-id="2428624192-15">(</span><span class="s">&quot;2024-01-01T00:00:00.789012Z&quot;</span><span class="p" data-group-id="2428624192-15">)</span><span class="w">
-</span><span class="gp unselectable">iex&gt; </span><span class="nc">JsonComparator</span><span class="o">.</span><span class="n">compare</span><span class="p" data-group-id="2428624192-16">(</span><span class="p" data-group-id="2428624192-17">%{</span><span class="ss">time</span><span class="p">:</span><span class="w"> </span><span class="n">dt1</span><span class="p" data-group-id="2428624192-17">}</span><span class="p">,</span><span class="w"> </span><span class="p" data-group-id="2428624192-18">%{</span><span class="ss">time</span><span class="p">:</span><span class="w"> </span><span class="n">dt2</span><span class="p" data-group-id="2428624192-18">}</span><span class="p">,</span><span class="w"> </span><span class="ss">truncate_datetime_microseconds</span><span class="p">:</span><span class="w"> </span><span class="no">true</span><span class="p" data-group-id="2428624192-16">)</span><span class="w">
-</span><span class="ss">:ok</span></code></pre>
+the path where the first difference was encountered</li></ul>
   </section>
 </section>
 
@@ -180,9 +168,9 @@ the path where the first difference was encountered</li></ul><h2 id="compare/3-e
       <p>
 
           <span class="line">
-            <a href="https://hex.pm/packages/json_comparator/0.1.1" class="footer-hex-package">Hex Package</a>
+            <a href="https://hex.pm/packages/json_comparator/1.0.1" class="footer-hex-package">Hex Package</a>
 
-            <a href="https://preview.hex.pm/preview/json_comparator/0.1.1">Hex Preview</a>
+            <a href="https://preview.hex.pm/preview/json_comparator/1.0.1">Hex Preview</a>
 
           </span>
 
