@@ -21,7 +21,7 @@ Add `json_comparator` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:json_comparator, "~> 1.0.0"}
+    {:json_comparator, "~> 1.0.7"}
   ]
 end
 ```
