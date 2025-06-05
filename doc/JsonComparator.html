@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.38.2">
-    <meta name="project" content="json_comparator v1.0.1">
+    <meta name="project" content="json_comparator v1.0.2">
 
 
-    <title>JsonComparator — json_comparator v1.0.1</title>
+    <title>JsonComparator — json_comparator v1.0.2</title>
 
     <link rel="stylesheet" href="dist/html-elixir-KV3YOVJ3.css" />
 
@@ -37,7 +37,7 @@
 json_comparator
         </a>
         <div class="sidebar-projectVersion" translate="no">
-          v1.0.1
+          v1.0.2
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@ json_comparator
   <div class="heading-with-actions top-heading">
     <h1>
       <span translate="no">JsonComparator</span> 
-      <small class="app-vsn" translate="no">(json_comparator v1.0.1)</small>
+      <small class="app-vsn" translate="no">(json_comparator v1.0.2)</small>
 
     </h1>
 
@@ -141,7 +141,7 @@ json_comparator
       <h1 class="signature" translate="no">compare(json1, json2, opts \\ [])</h1>
 
 
-        <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator.ex#L32" class="icon-action" rel="help" aria-label="View Source">
+        <a href="https://github.com/zakurakin/json_comparator/blob/main/lib/json_comparator.ex#L40" class="icon-action" rel="help" aria-label="View Source">
           <i class="ri-code-s-slash-line" aria-hidden="true"></i>
         </a>
 
@@ -152,12 +152,16 @@ json_comparator
 
 <p>Compares two JSON structures for equality with configurable options.</p><p>This function performs a deep comparison of two JSON structures, supporting various data types
 including maps, lists, DateTime objects, and structs. It provides configurable behavior for
-list comparison and DateTime precision.</p><h2 id="compare/3-parameters" class="section-heading"><a href="#compare/3-parameters" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Parameters</span></h2><ul><li><code class="inline">json1</code> - First JSON structure to compare</li><li><code class="inline">json2</code> - Second JSON structure to compare</li><li><code class="inline">opts</code> - Optional keyword list of comparison options:<ul><li><code class="inline">:strict_list_order</code> - When <code class="inline">true</code>, lists must have identical order to be considered equal.
+list comparison and DateTime precision.</p><p>By default, this function stops and returns on the first difference found.
+Use the <code class="inline">deep_compare: true</code> option to collect all differences.</p><h2 id="compare/3-parameters" class="section-heading"><a href="#compare/3-parameters" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Parameters</span></h2><ul><li><code class="inline">json1</code> - First JSON structure to compare</li><li><code class="inline">json2</code> - Second JSON structure to compare</li><li><code class="inline">opts</code> - Optional keyword list of comparison options:<ul><li><code class="inline">:strict_list_order</code> - When <code class="inline">true</code>, lists must have identical order to be considered equal.
 Defaults to <code class="inline">false</code></li><li><code class="inline">:truncate_datetime_microseconds</code> - When <code class="inline">true</code>, DateTime comparisons ignore microseconds.
 Defaults to <code class="inline">true</code></li><li><code class="inline">:error_message</code> - Custom error message template to use when differences are found.
 The string <code class="inline">%{path}</code> will be replaced with the path where the difference was found.
-Defaults to &quot;Submitted JSONs do not match: %{path}&quot;</li></ul></li></ul><h2 id="compare/3-returns" class="section-heading"><a href="#compare/3-returns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Returns</span></h2><ul><li><code class="inline">:ok</code> - When the structures are equal according to the comparison rules</li><li><code class="inline">{:error, message}</code> - When differences are found, where message is a string indicating
-the path where the first difference was encountered</li></ul>
+Defaults to &quot;Submitted JSONs do not match: %{path}&quot;</li><li><code class="inline">:deep_compare</code> - When <code class="inline">true</code>, collects all differences instead of stopping at the first one.
+Defaults to <code class="inline">false</code>. When <code class="inline">true</code>, returns <code class="inline">{:error, differences}</code> where <code class="inline">differences</code> is a list
+of <code class="inline">{path, details}</code> tuples.</li></ul></li></ul><h2 id="compare/3-returns" class="section-heading"><a href="#compare/3-returns" class="hover-link"><i class="ri-link-m" aria-hidden="true"></i></a><span class="text">Returns</span></h2><ul><li><code class="inline">:ok</code> - When the structures are equal according to the comparison rules</li><li><code class="inline">{:error, message}</code> - When differences are found and <code class="inline">deep_compare: false</code>, where message is a
+ string indicating the path where the first difference was encountered</li><li><code class="inline">{:error, differences}</code> - When differences are found and <code class="inline">deep_compare: true</code>, where differences
+ is a list of tuples containing path and details about each difference</li></ul>
   </section>
 </section>
 
@@ -168,9 +172,9 @@ the path where the first difference was encountered</li></ul>
       <p>
 
           <span class="line">
-            <a href="https://hex.pm/packages/json_comparator/1.0.1" class="footer-hex-package">Hex Package</a>
+            <a href="https://hex.pm/packages/json_comparator/1.0.2" class="footer-hex-package">Hex Package</a>
 
-            <a href="https://preview.hex.pm/preview/json_comparator/1.0.1">Hex Preview</a>
+            <a href="https://preview.hex.pm/preview/json_comparator/1.0.2">Hex Preview</a>
 
           </span>
 

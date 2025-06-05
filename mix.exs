@@ -4,7 +4,7 @@ defmodule JsonComparator.MixProject do
   def project do
     [
       app: :json_comparator,
-      version: "1.0.2",
+      version: "1.0.3",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
