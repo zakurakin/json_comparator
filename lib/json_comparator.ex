@@ -179,8 +179,11 @@ defmodule JsonComparator do
          }}
       end)
 
+    # Check for value differences in common keys
+    common_keys = keys1 |> MapSet.new() |> MapSet.intersection(MapSet.new(keys2)) |> MapSet.to_list()
+
     value_diffs =
-      Enum.reduce(keys1 -- (keys1 -- keys2), [], fn key, acc ->
+      Enum.reduce(common_keys, [], fn key, acc ->
         path_key = if path == "", do: "#{key}", else: "#{path}.#{key}"
         {diffs, _} = collect_all_differences(map1[key], map2[key], path_key, opts)
         acc ++ diffs
