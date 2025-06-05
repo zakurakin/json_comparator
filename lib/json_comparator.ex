@@ -1,18 +1,32 @@
 defmodule JsonComparator do
   @moduledoc """
-  Provides functionality for comparing JSON structures with configurable comparison options.
 
-  ## Examples
+    Provides functionality for comparing JSON structures with configurable comparison options.
 
-      iex> map1 = %{a: 1, b: 2, c: %{d: 3, e: 4}}
-      iex> map2 = %{a: 1, b: 5, c: %{d: 6}}
-      iex> {:error, differences} = JsonComparator.compare_all(map1, map2)
-      iex> Enum.map(differences, fn {path, _} -> path end) |> Enum.sort()
-      ["b", "c.d", "c.e"]
+    JsonComparator enables deep comparison of complex data structures like those returned from
+    JSON parsing, with support for nested maps, lists, DateTime objects, and structs.
 
-      # No differences
-      iex> JsonComparator.compare_all(%{a: 1}, %{a: 1})
-      :ok
+    ## Key Features
+
+    * Deep comparison of nested structures
+    * Flexible list comparison (ordered or unordered)
+    * DateTime comparison with configurable precision
+    * Struct comparison support
+    * Custom error messages
+    * Detailed path reporting for differences
+    * Comprehensive difference collection with `deep_compare` option
+
+    ## Usage
+
+    Basic comparison (returns `:ok` or a single error):
+
+        JsonComparator.compare(json1, json2, options)
+
+    Collect all differences between structures:
+
+        JsonComparator.compare(json1, json2, deep_compare: true)
+
+    See `compare/3` for more details and examples.
   """
 
   @doc """
@@ -80,7 +94,7 @@ defmodule JsonComparator do
       # Processing all differences
       iex> map1 = %{a: 1, b: 2, c: 3}
       iex> map2 = %{a: 1, b: 5}
-      iex> {:error, diffs} = JsonComparator.compare(map1, map2, deep_compare: true) |> IO.inspect(label: "---- Result ----", limit: :infinity)
+      iex> {:error, _diffs} = JsonComparator.compare(map1, map2, deep_compare: true)
       {:error,
       [
         {"c", %{type: :missing_key, actual: nil, expected: 3}},
