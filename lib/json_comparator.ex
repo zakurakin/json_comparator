@@ -126,12 +126,39 @@ defmodule JsonComparator do
           :ok
 
         {:ok, false} ->
-          {:error, String.replace(opts[:error_message], "%{path}", "")}
+          # Generic difference without specific path
+          if is_list(json1) and is_list(json2) do
+            # For lists, try to find a specific difference
+            case find_first_list_difference(json1, json2, opts) do
+              {:ok, path} when path != "" ->
+                {:error, String.replace(opts[:error_message], "%{path}", path)}
+              _ ->
+                {:error, String.replace(opts[:error_message], "%{path}", "")}
+            end
+          else
+            {:error, String.replace(opts[:error_message], "%{path}", "")}
+          end
 
         {:ok, {false, path}} ->
           path_str = to_string(path)
           {:error, String.replace(opts[:error_message], "%{path}", path_str)}
       end
+    end
+  end
+
+  # Helper to find the first difference in lists when no specific path is returned
+  defp find_first_list_difference(list1, list2, opts) do
+    cond do
+      length(list1) != length(list2) ->
+        {:ok, ""}
+      true ->
+        # Compare each item to find the first difference
+        Enum.reduce_while(Enum.with_index(Enum.zip(list1, list2)), :error, fn {{item1, item2}, idx}, _acc ->
+          case find_deepest_path_difference(item1, item2, "[#{idx}]", opts) do
+            {:ok, path} -> {:halt, {:ok, path}}
+            _ -> {:cont, :error}
+          end
+        end)
     end
   end
 
@@ -342,7 +369,8 @@ defmodule JsonComparator do
       matched_pairs
       |> Enum.with_index()
       |> Enum.reduce([], fn {{item1, item2}, index}, acc ->
-        path_idx = "#{path}[#{index}]"
+          # Ensure we include the full path with the index
+          path_idx = if path == "", do: "[#{index}]", else: "#{path}[#{index}]"
         {diffs, _} = collect_all_differences(item1, item2, path_idx, opts)
         acc ++ diffs
       end)
@@ -352,7 +380,8 @@ defmodule JsonComparator do
       unmatched
       |> Enum.with_index(length(matched_pairs))
       |> Enum.map(fn {item, index} ->
-        path_idx = "#{path}[#{index}]"
+        # Ensure consistent path formatting for array indices
+        path_idx = if path == "", do: "[#{index}]", else: "#{path}[#{index}]"
 
         {path_idx,
          %{
@@ -366,7 +395,8 @@ defmodule JsonComparator do
       remaining_items
       |> Enum.with_index(length(matched_pairs) + length(unmatched))
       |> Enum.map(fn {item, index} ->
-        path_idx = "#{path}[#{index}]"
+        # Ensure consistent path formatting for array indices
+        path_idx = if path == "", do: "[#{index}]", else: "#{path}[#{index}]"
 
         {path_idx,
          %{
@@ -381,6 +411,27 @@ defmodule JsonComparator do
   end
 
   defp find_matching_item(item, list, opts) do
+    # For maps with an 'id' field, try to match by id first for better matching
+    if is_map(item) && Map.has_key?(item, :id) do
+      id_match = Enum.find_index(list, fn candidate -> 
+        is_map(candidate) && Map.has_key?(candidate, :id) && candidate.id == item.id
+      end)
+
+      if id_match != nil do
+        candidate = Enum.at(list, id_match)
+        new_list = List.delete_at(list, id_match)
+        {:ok, candidate, new_list}
+      else
+        # Fall back to similarity matching
+        find_most_similar_item(item, list, opts)
+      end
+    else
+      # For other types, use similarity matching
+      find_most_similar_item(item, list, opts)
+    end
+  end
+
+  defp find_most_similar_item(item, list, opts) do
     Enum.reduce_while(Enum.with_index(list), :error, fn {candidate, idx}, _acc ->
       {_diffs, is_match} = collect_all_differences(item, candidate, "", opts)
 
@@ -416,7 +467,11 @@ defmodule JsonComparator do
   end
 
   defp deep_compare(list1, list2, opts) when is_list(list1) and is_list(list2) do
-    compare_lists(list1, list2, opts)
+    # For lists, make sure we correctly add the path component
+    case compare_lists(list1, list2, opts) do
+      {:ok, {false, path}} -> {:ok, {false, path}}
+      other -> other
+    end
   end
 
   defp deep_compare(val1, val2, _opts) do
@@ -440,7 +495,16 @@ defmodule JsonComparator do
     Enum.reduce_while(keys, {:ok, true}, fn key, acc ->
       case deep_compare(map1[key], map2[key], opts) do
         {:ok, true} -> {:cont, acc}
-        {:ok, {false, path}} -> {:halt, {:ok, {false, "#{key}.#{path}"}}}
+        {:ok, {false, path}} -> 
+          # Format the path correctly depending on whether the subpath starts with an array index
+          path_str = to_string(path)
+          formatted_path = 
+            cond do
+              path_str == "" -> "#{key}"
+              String.starts_with?(path_str, "[") -> "#{key}#{path_str}"
+              true -> "#{key}.#{path_str}"
+            end
+          {:halt, {:ok, {false, formatted_path}}}
         {:ok, false} -> {:halt, {:ok, {false, key}}}
       end
     end)
@@ -455,7 +519,9 @@ defmodule JsonComparator do
         compare_lists_strict(list1, list2, opts)
 
       true ->
-        compare_lists_unordered(list1, list2, opts)
+        path_result = compare_lists_unordered(list1, list2, opts)
+        # Make sure to preserve the full path with array indexes
+        path_result
     end
   end
 
@@ -473,14 +539,139 @@ defmodule JsonComparator do
   end
 
   defp compare_lists_unordered(list1, list2, opts) do
-    result =
-      Enum.reduce_while(list1, list2, fn item1, acc ->
-        case Enum.find_index(acc, &match?({:ok, true}, deep_compare(&1, item1, opts))) do
-          nil -> {:halt, nil}
-          idx -> {:cont, List.delete_at(acc, idx)}
+    # First, try to find exact matches for each item
+    {_matched, unmatched, remaining} = match_list_items(list1, list2, opts)
+
+    # If all items matched, return success
+    if unmatched == [] and remaining == [] do
+      {:ok, true}
+    else
+      # Otherwise, try to find the best partial match to report a specific path
+      find_first_difference(unmatched, remaining, opts)
+    end
+  end
+
+  defp match_list_items(list1, list2, opts) do
+    Enum.reduce(list1, {[], [], list2}, fn item1, {matched, unmatched, remaining} ->
+      case find_exact_match(item1, remaining, opts) do
+        {:ok, item2, new_remaining} ->
+          {[{item1, item2} | matched], unmatched, new_remaining}
+        :error ->
+          {matched, [item1 | unmatched], remaining}
+      end
+    end)
+  end
+
+  defp find_exact_match(item, list, opts) do
+    Enum.reduce_while(Enum.with_index(list), :error, fn {candidate, idx}, _acc ->
+      case deep_compare(item, candidate, opts) do
+        {:ok, true} -> 
+          {:halt, {:ok, candidate, List.delete_at(list, idx)}}
+        _ -> 
+          {:cont, :error}
+      end
+    end)
+  end
+
+  defp find_first_difference(unmatched, remaining, opts) do
+    # Try to match the first unmatched item with each remaining item
+    # to find the specific difference
+    if unmatched != [] do
+      item = hd(unmatched)
+
+      # Find the item with the most similarities (fewest differences)
+      best_match = find_best_partial_match(item, remaining, opts)
+
+      case best_match do
+        {:ok, {_candidate, _idx, path}} ->
+          # Return the path to the first difference
+          {:ok, {false, "[0].#{path}"}}
+        :error ->
+          # No partial match found, just report the list itself
+          {:ok, {false, ""}}
+      end
+    else
+      # Extra items in list2
+      {:ok, {false, ""}}
+    end
+  end
+
+  defp find_best_partial_match(item, list, opts) do
+    Enum.reduce_while(Enum.with_index(list), :error, fn {candidate, idx}, acc ->
+      case find_deepest_path_difference(item, candidate, "", opts) do
+        {:ok, path} when path != "" ->
+          # Found a specific difference path
+          best_match = {:ok, {candidate, idx, path}}
+          {:halt, best_match}
+        _ ->
+          {:cont, acc}
+      end
+    end)
+  end
+
+  defp find_deepest_path_difference(item1, item2, path, opts) do
+    # For maps, check each key
+    cond do
+      is_map(item1) and is_map(item2) and not (is_struct(item1) or is_struct(item2)) ->
+        find_map_differences(item1, item2, path, opts)
+
+      is_list(item1) and is_list(item2) ->
+        find_list_differences(item1, item2, path, opts)
+
+      true ->
+        # For simple values, just check equality
+        if item1 === item2 do
+          :error
+        else
+          {:ok, path}
+        end
+    end
+  end
+
+  defp find_map_differences(map1, map2, path_prefix, opts) do
+    # Check each key in map1
+    Enum.reduce_while(Map.keys(map1), :error, fn key, acc ->
+      # Skip if key doesn't exist in map2
+      if Map.has_key?(map2, key) do
+        val1 = Map.get(map1, key)
+        val2 = Map.get(map2, key)
+
+        # Build the new path segment
+        new_path = if path_prefix == "", do: "#{key}", else: "#{path_prefix}.#{key}"
+
+        if val1 !== val2 do
+          # Recursively check complex structures
+          case find_deepest_path_difference(val1, val2, new_path, opts) do
+            {:ok, path} -> {:halt, {:ok, path}}
+            :error -> {:halt, {:ok, new_path}}
+          end
+        else
+          {:cont, acc}
+        end
+      else
+        {:cont, acc}
+      end
+    end)
+  end
+
+  defp find_list_differences(list1, list2, path_prefix, opts) do
+    # For short lists, compare item by item
+    if length(list1) == length(list2) and length(list1) <= 10 do
+      Enum.reduce_while(Enum.with_index(Enum.zip(list1, list2)), :error, fn {{item1, item2}, idx}, acc ->
+        new_path = if path_prefix == "", do: "[#{idx}]", else: "#{path_prefix}[#{idx}]"
+
+        if item1 !== item2 do
+          case find_deepest_path_difference(item1, item2, new_path, opts) do
+            {:ok, path} -> {:halt, {:ok, path}}
+            :error -> {:halt, {:ok, new_path}}
+          end
+        else
+          {:cont, acc}
         end
       end)
-
-    {:ok, result == []}
+    else
+      # For longer lists or different lengths, just report the path
+      {:ok, path_prefix}
+    end
   end
 end

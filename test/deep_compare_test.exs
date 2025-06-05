@@ -94,6 +94,9 @@ defmodule JsonComparator.DeepCompareTest do
       assert diff_map["user.settings.theme"][:actual] == "light"
       assert diff_map["user.settings.notifications"][:type] == :missing_key
       assert diff_map["user.settings.language"][:type] == :extra_key
+
+      # Verify role differences are captured
+      assert Map.has_key?(diff_map, "user.roles[0]") || Map.has_key?(diff_map, "user.roles[1]")
     end
   end
 end
