@@ -71,6 +71,14 @@ defmodule JsonComparator do
     compare_map_keys(Map.keys(map1), Map.keys(map2), map1, map2, opts)
   end
 
+  defp deep_compare(list1, list2, opts) when is_list(list1) and is_list(list2) do
+    compare_lists(list1, list2, opts)
+  end
+
+  defp deep_compare(val1, val2, _opts) do
+    {:ok, val1 === val2}
+  end
+
   defp compare_map_keys(keys1, keys2, map1, map2, opts) do
     case keys1 -- keys2 do
       [] ->
@@ -92,14 +100,6 @@ defmodule JsonComparator do
         {:ok, false} -> {:halt, {:ok, {false, key}}}
       end
     end)
-  end
-
-  defp deep_compare(list1, list2, opts) when is_list(list1) and is_list(list2) do
-    compare_lists(list1, list2, opts)
-  end
-
-  defp deep_compare(val1, val2, _opts) do
-    {:ok, val1 === val2}
   end
 
   defp compare_lists(list1, list2, opts) do
