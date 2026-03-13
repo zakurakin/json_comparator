@@ -19,8 +19,8 @@ defmodule JsonComparator.MixProject do
   defp deps do
     [
       {:excoveralls, "~> 0.18", only: [:dev, :test]},
-      {:credo, "~> 1.7", runtime: false, only: [:dev]},
-      {:credo_ext, "~> 0.1.1", only: [:dev]},
+      {:credo, "~> 1.7", runtime: false, only: [:dev, :test]},
+      {:credo_ext, "~> 0.1.1", only: [:dev, :test]},
       {:ex_doc, "~> 0.32", runtime: false, only: [:dev]}
     ]
   end
