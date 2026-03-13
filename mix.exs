@@ -20,7 +20,7 @@ defmodule JsonComparator.MixProject do
     [
       {:excoveralls, "~> 0.18", only: [:dev, :test]},
       {:credo, "~> 1.7", runtime: false, only: [:dev, :test]},
-      {:credo_ext, "~> 0.1.1", only: [:dev, :test]},
+      {:credo_ext, "~> 0.1.1", only: [:dev]},
       {:ex_doc, "~> 0.32", runtime: false, only: [:dev]}
     ]
   end
