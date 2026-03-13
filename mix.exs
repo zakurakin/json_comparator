@@ -4,7 +4,7 @@ defmodule JsonComparator.MixProject do
   def project do
     [
       app: :json_comparator,
-      version: "1.0.8",
+      version: "1.0.9",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
@@ -19,9 +19,9 @@ defmodule JsonComparator.MixProject do
   defp deps do
     [
       {:excoveralls, "~> 0.18", only: [:dev, :test]},
-      {:credo, "~> 1.7", runtime: false},
-      {:ex_doc, "~> 0.32", runtime: false},
-      {:credo_ext, "~> 0.1.1"}
+      {:credo, "~> 1.7", runtime: false, only: [:dev]},
+      {:credo_ext, "~> 0.1.1", only: [:dev]},
+      {:ex_doc, "~> 0.32", runtime: false, only: [:dev]}
     ]
   end
 
