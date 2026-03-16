@@ -36,7 +36,7 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.exs', 'mix.lock') }}
 
       - name: Install Mix Dependencies
         if: steps.mix-cache.outputs.cache-hit != 'true'
@@ -70,7 +70,7 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.exs', 'mix.lock') }}
 
       - name: Check Formatting
         run: mix format --check-formatted
@@ -102,7 +102,7 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.lock') }}
+          key: ${{ runner.os }}-${{ env.OTP_VERSION }}-${{ env.ELIXIR_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.exs', 'mix.lock') }}
 
       - name: Run Unit Tests
         run: |
