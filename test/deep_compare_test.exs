@@ -41,6 +41,15 @@ defmodule JsonComparator.DeepCompareTest do
       assert diff_map["h"][:type] == :extra_key
     end
 
+    test "compare_all/3 enables deep comparison" do
+      assert {:error, diffs} = JsonComparator.compare_all(%{a: 1, b: 2}, %{a: 3})
+
+      diff_map = Enum.into(diffs, %{}, fn {path, details} -> {path, details} end)
+
+      assert diff_map["a"][:type] == :value_mismatch
+      assert diff_map["b"][:type] == :missing_key
+    end
+
     test "returns all differences in lists with deep_compare: true" do
       list1 = [1, 2, 3, 4]
       list2 = [1, 5, 6, 7]
@@ -97,6 +106,22 @@ defmodule JsonComparator.DeepCompareTest do
 
       # Verify role differences are captured
       assert Map.has_key?(diff_map, "user.roles[0]") || Map.has_key?(diff_map, "user.roles[1]")
+    end
+
+    test "matches unordered maps by string id when collecting deep differences" do
+      list1 = [%{"id" => 1, "value" => "expected"}, %{"id" => 2, "value" => "same"}]
+      list2 = [%{"id" => 2, "value" => "same"}, %{"id" => 1, "value" => "actual"}]
+
+      assert {:error, diffs} = JsonComparator.compare_all(list1, list2)
+
+      assert [
+               {"[0].value",
+                %{
+                  expected: "expected",
+                  actual: "actual",
+                  type: :value_mismatch
+                }}
+             ] = diffs
     end
   end
 end

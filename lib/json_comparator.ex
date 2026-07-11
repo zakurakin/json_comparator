@@ -112,6 +112,15 @@ defmodule JsonComparator do
     end
   end
 
+  @doc """
+  Compares two JSON structures and collects all differences.
+
+  This is a convenience wrapper around `compare/3` with `deep_compare: true`.
+  """
+  def compare_all(json1, json2, opts \\ []) do
+    compare(json1, json2, Keyword.put(opts, :deep_compare, true))
+  end
+
   defp normalize_options(opts) do
     [
       strict_list_order: Keyword.get(opts, :strict_list_order, false),
@@ -377,23 +386,24 @@ defmodule JsonComparator do
     # This is a greedy matching algorithm that may not find all optimal matches
     # but it's sufficient for most practical cases
     {remaining_items, matched_pairs, unmatched} =
-      Enum.reduce(list1, {list2, [], []}, fn item1, {remaining, matched, unmatched} ->
+      list1
+      |> Enum.with_index()
+      |> Enum.reduce({list2, [], []}, fn {item1, index}, {remaining, matched, unmatched} ->
         case find_matching_item(item1, remaining, opts) do
           {:ok, item2, new_remaining} ->
-            {new_remaining, [{item1, item2} | matched], unmatched}
+            {new_remaining, [{index, item1, item2} | matched], unmatched}
 
           :error ->
-            {remaining, matched, [item1 | unmatched]}
+            {remaining, matched, [{index, item1} | unmatched]}
         end
       end)
 
     # Process matched pairs to find internal differences
     matched_diffs =
       matched_pairs
-      |> Enum.with_index()
-      |> Enum.reduce([], fn {{item1, item2}, index}, acc ->
-        # Ensure we include the full path with the index
-        path_idx = if path == "", do: "[#{index}]", else: "#{path}[#{index}]"
+      |> Enum.reverse()
+      |> Enum.reduce([], fn {index, item1, item2}, acc ->
+        path_idx = list_path(path, index)
         {diffs, _} = collect_all_differences(item1, item2, path_idx, opts)
         acc ++ diffs
       end)
@@ -401,10 +411,9 @@ defmodule JsonComparator do
     # Handle unmatched items from both lists
     unmatched_diffs1 =
       unmatched
-      |> Enum.with_index(length(matched_pairs))
-      |> Enum.map(fn {item, index} ->
-        # Ensure consistent path formatting for array indices
-        path_idx = if path == "", do: "[#{index}]", else: "#{path}[#{index}]"
+      |> Enum.reverse()
+      |> Enum.map(fn {index, item} ->
+        path_idx = list_path(path, index)
 
         {path_idx,
          %{
@@ -416,10 +425,9 @@ defmodule JsonComparator do
 
     unmatched_diffs2 =
       remaining_items
-      |> Enum.with_index(length(matched_pairs) + length(unmatched))
+      |> Enum.with_index(length(list1))
       |> Enum.map(fn {item, index} ->
-        # Ensure consistent path formatting for array indices
-        path_idx = if path == "", do: "[#{index}]", else: "#{path}[#{index}]"
+        path_idx = list_path(path, index)
 
         {path_idx,
          %{
@@ -433,27 +441,40 @@ defmodule JsonComparator do
     {all_diffs, all_diffs == []}
   end
 
+  defp list_path("", index), do: "[#{index}]"
+  defp list_path(path, index), do: "#{path}[#{index}]"
+
   defp find_matching_item(item, list, opts) do
     # For maps with an 'id' field, try to match by id first for better matching
-    if is_map(item) && Map.has_key?(item, :id) do
-      id_match =
-        Enum.find_index(list, fn candidate ->
-          is_map(candidate) && Map.has_key?(candidate, :id) && candidate.id == item.id
-        end)
+    case item_id(item) do
+      {:ok, id} ->
+        id_match =
+          Enum.find_index(list, fn candidate ->
+            item_id(candidate) == {:ok, id}
+          end)
 
-      if id_match != nil do
-        candidate = Enum.at(list, id_match)
-        new_list = List.delete_at(list, id_match)
-        {:ok, candidate, new_list}
-      else
-        # Fall back to similarity matching
+        if id_match != nil do
+          candidate = Enum.at(list, id_match)
+          new_list = List.delete_at(list, id_match)
+          {:ok, candidate, new_list}
+        else
+          find_most_similar_item(item, list, opts)
+        end
+
+      :error ->
         find_most_similar_item(item, list, opts)
-      end
-    else
-      # For other types, use similarity matching
-      find_most_similar_item(item, list, opts)
     end
   end
+
+  defp item_id(%{} = item) do
+    cond do
+      Map.has_key?(item, :id) -> {:ok, Map.get(item, :id)}
+      Map.has_key?(item, "id") -> {:ok, Map.get(item, "id")}
+      true -> :error
+    end
+  end
+
+  defp item_id(_item), do: :error
 
   defp find_most_similar_item(item, list, opts) do
     Enum.reduce_while(Enum.with_index(list), :error, fn {candidate, idx}, _acc ->
