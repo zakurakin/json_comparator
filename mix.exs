@@ -4,15 +4,20 @@ defmodule JsonComparator.MixProject do
   def project do
     [
       app: :json_comparator,
-      version: "1.0.9",
+      version: "1.0.10",
       elixir: "~> 1.16",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
-      preferred_cli_env: [coveralls: :test],
       deps: deps(),
       description: "A module for deep json comparison.",
       package: package(),
       source_url: "https://github.com/zakurakin/json_comparator"
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [coveralls: :test]
     ]
   end
 

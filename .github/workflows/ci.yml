@@ -11,6 +11,8 @@ concurrency:
 env:
   ELIXIR_VERSION: 1.16.2
   OTP_VERSION: 26
+  LATEST_ELIXIR_VERSION: 1.20.2
+  LATEST_OTP_VERSION: 29
 
 jobs:
   build:
@@ -21,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -30,7 +32,7 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
 
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         id: mix-cache
         with:
           path: |
@@ -55,7 +57,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -64,7 +66,7 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
 
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         id: mix-cache
         with:
           path: |
@@ -87,7 +89,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
@@ -96,7 +98,7 @@ jobs:
           otp-version: ${{ env.OTP_VERSION }}
 
       - name: Retrieve Cached Dependencies
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         id: mix-cache
         with:
           path: |
@@ -109,3 +111,33 @@ jobs:
           mix coveralls.github --umbrella
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+  latest:
+    name: Latest Elixir/OTP
+    runs-on: ubuntu-latest
+    env:
+      MIX_ENV: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{ env.LATEST_ELIXIR_VERSION }}
+          otp-version: ${{ env.LATEST_OTP_VERSION }}
+
+      - name: Retrieve Cached Dependencies
+        uses: actions/cache@v6
+        with:
+          path: |
+            deps
+            _build
+          key: ${{ runner.os }}-${{ env.LATEST_OTP_VERSION }}-${{ env.LATEST_ELIXIR_VERSION }}-${{ env.MIX_ENV }}-${{ hashFiles('mix.exs', 'mix.lock') }}
+
+      - name: Install Mix Dependencies
+        run: mix deps.get
+
+      - name: Run Unit Tests
+        run: mix test
